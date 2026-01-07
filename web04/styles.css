@@ -1,0 +1,288 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+/* 引入Google Fonts字體 */
+
+
+body {
+    margin: 0;
+    background-color: rgb(10, 42, 67); 
+    font-family: "Inter", sans-serif;
+    overflow-x: hidden; 
+    /*防止畫面溢出 禁止滾動條*/
+}
+
+.spacing-2 { letter-spacing: 2px; }
+/*字距*/
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-100%); 
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0); 
+        opacity: 1;
+    }
+}
+/*transform: translateY:位置Y軸 opacity透明度*/
+
+@keyframes slideOutUp {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+}
+/*進出場動畫*/
+
+#words {
+    position: absolute;
+    left: 0; 
+    height: auto; /*避免被裁切*/
+    width: 50%;
+    
+    pointer-events: none;
+    opacity: 0.8;
+    animation: slowDrift 5s ease-in-out infinite;
+}
+
+@keyframes slowFlow {
+    0% {
+        transform: translateY(-50px); /* 從上面一點點開始 */
+    }
+    100% {
+        transform: translateY(50px); /* 一直往下流到這裡，然後瞬間跳回 0% 重新開始 */
+    }
+}
+/*代碼瀑布動畫 但是完全沒反應 無法解決遂放任之*/
+
+
+.menu {
+    background: rgba(55, 55, 55, 0.5);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border-radius: 0 0 20px 20px;
+}
+/*backdrop-filter: blur不生效 目前找不到解決方法*/
+
+#desktop-nav .nav-link {
+    color: #fff;
+    font-size: 20px;
+    letter-spacing: 7px;
+    padding: 10px 35px;
+    transition: 0.3s;
+    border-radius: 0 0 20px 20px;
+}
+
+#desktop-nav .nav-link:hover,
+#desktop-nav .nav-link.active {
+    background-color: rgb(10, 42, 67);
+    color: #fff;
+    padding: 12px 35px;
+}
+/* Hover滑鼠懸停 Active被選中 */
+
+
+#mobileMenuContent {
+    background: rgba(55, 55, 55, 0.5);
+    /*backdrop-filter: blur(4px);*/
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+/* =========================================
+   4. 響應式動畫控制 (RWD Animation Logic)
+   ★ 這是實現你要求的「互相切換」的核心區塊
+   ========================================= */
+
+/* --- 電腦版模式 (螢幕寬度 >= 992px) --- */
+@media (min-width: 992px) {
+    /* 桌面選單：執行「滑入」動畫 */
+    #desktop-nav {
+        animation: slideInDown 1s ease-out forwards;
+        z-index: 1000;
+    }
+
+    /* 手機控制列：執行「滑出」動畫 */
+    #mobile-header {
+        animation: slideOutUp 0.8s ease-out forwards;
+        /* 重要：變成透明後，滑鼠還可能會點到它，這行確保滑鼠穿透過去 */
+        pointer-events: none; 
+        z-index: 999;
+    }
+    
+    /* 強制隱藏手機下拉內容 */
+    #mobileMenuContent {
+        display: none !important;
+    }
+}
+
+/* --- 手機版模式 (螢幕寬度 < 992px) --- */
+@media (max-width: 991.98px) {
+    /* 桌面選單：執行「滑出」動畫 */
+    #desktop-nav {
+        animation: slideOutUp 0.8s ease-out forwards;
+        pointer-events: none; /* 防止隱藏後還擋到點擊 */
+    }
+
+    /* 手機控制列：執行「滑入」動畫 */
+    #mobile-header {
+        animation: slideInDown 1s ease-out forwards;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+    }
+}
+
+/* =========================================
+   5. 首頁視差區塊 (Home Parallax)
+   ========================================= */
+.Home-section {
+    position: relative; /* 作為內部絕對定位元素的參考座標 */
+    width: 100vw;
+    height: 100vh; /* 佔滿整個視窗高度 */
+    overflow: hidden; /* 超出去的圖片切掉 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 視差圖片共用設定 */
+.Home-section img {
+    position: absolute; /* 絕對定位，這樣才能疊在一起 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 確保圖片填滿不變形 */
+    pointer-events: none; /* 讓滑鼠點不到圖片，可以直接捲動頁面 */
+}
+
+/* 1. 底部漸層遮罩 (讓連接處變柔和) */
+.Home-section::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 350px;
+    background: linear-gradient(to top, rgb(10, 42, 67), transparent);
+    z-index: 10;     
+    pointer-events: none;
+}
+
+/* 2. 全局顏色濾鏡 (統一色調) */
+.Home-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(10, 42, 67);
+    mix-blend-mode: color; 
+    z-index: 10;       
+    pointer-events: none; 
+}
+/*
+content: ''設置一個空的偽元素
+linear-gradient漸層
+transparent透明
+mix-blend-mode混色模式
+*/
+
+/* 調整圖層順序 (z-index) */
+#road { z-index: 6; } 
+
+#text {
+    position: relative;
+    z-index: 5;
+    color: white;
+    text-align: center;
+    margin-bottom: 12vh;
+    /* 下邊距加寬 */
+}
+
+#text h3 {
+    font-size: clamp(1rem, 2vw, 2rem); /* 響應式字體：最小1rem，最大2rem */
+    letter-spacing: 10px;
+    font-weight: 400;
+    animation: textUp 1.5s ease-out forwards;
+}
+
+#text h1 {
+    font-size: clamp(3rem, 12vw, 40rem);
+    font-weight: 1000;
+    text-transform: uppercase;
+    letter-spacing: 1vw;
+    margin-top: -10px;
+    animation: textUp 1.8s ease-out forwards;
+}
+
+/* 文字進場動畫 */
+@keyframes textUp {
+    from {
+        transform: translateY(80vh); 
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* =========================================
+   6. 關於區塊 (About)
+   ========================================= */
+.About-section {
+    position: relative;
+    background-image: url(assets/images/lg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding-bottom: 100px;
+}
+
+/* 大頭貼的特殊邊框 */
+.border-custom {
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-style: dashed; /* 虛線 */
+    max-width: 300px;
+    transition: transform 0.3s;
+}
+
+.border-custom:hover {
+    transform: rotate(5deg); /* 滑鼠移過去稍微轉一下 */
+}
+
+/* =========================================
+   7. 作品集區塊 (Works)
+   ========================================= */
+.section-works {
+    background-color: rgb(76, 111, 136); /* 灰藍色背景 */
+}
+
+/* 作品卡片樣式 */
+.work-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.work-card img:hover {
+    transform: scale(1.02); /* 滑鼠移過去圖片稍微放大 */
+}
+
+/* =========================================
+   8. 聯絡區塊與頁尾 (Contact & Footer)
+   ========================================= */
+.Contact-section h1 {
+    letter-spacing: 5px;
+}
+
+footer {
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
