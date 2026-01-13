@@ -41,29 +41,68 @@ body {
     position: absolute;
     left: 0; 
     height: auto; /*避免被裁切*/
-    width: 50%;
-    
+    width: 40%;
     pointer-events: none;
-    opacity: 0.8;
-    animation: slowDrift 5s ease-in-out infinite;
+    opacity: 0.3;
+    animation: slowFlow 140s infinite; /*循環動畫未生效 尚未找到解決方法*/
 }
-
 @keyframes slowFlow {
     0% {
-        transform: translateY(-50px); /* 從上面一點點開始 */
+        transform: translateY(15%);
     }
     100% {
-        transform: translateY(50px); /* 一直往下流到這裡，然後瞬間跳回 0% 重新開始 */
+        transform: translateY(-130%);
     }
 }
-/*代碼瀑布動畫 但是完全沒反應 無法解決遂放任之*/
+
+
+
+@media (min-width: 1030px) {
+    /*滑入*/
+    #desktop-nav {
+        animation: slideInDown 1s ease-out forwards;
+        z-index: 1000;
+        /*把blur放這邊能生效但是會超出清單的範圍(整個header都blur)*/
+    }
+
+    /*滑出*/
+    #mobile-header {
+        animation: slideOutUp 0.8s ease-out forwards;
+        pointer-events: none; 
+         /*滑鼠不點擊到*/
+        z-index: 999;
+    }
+    
+    
+    #mobileMenuContent {
+        display: none !important;
+    }
+    /*這個不加排版會亂掉*/
+}
+
+@media (max-width: 1029.98px) {
+    /*滑出*/
+    #desktop-nav {
+        animation: slideOutUp 0.8s ease-out forwards;
+        pointer-events: none; 
+    }
+
+    /*滑入*/
+    #mobile-header {
+        animation: slideInDown 1s ease-out forwards;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0);
+        /*backdrop-filter: blur(2px);*/
+        /*為什麼這個就能生效了啊 畫風不統一只能先關掉*/
+    }
+}
 
 
 .menu {
     background: rgba(55, 55, 55, 0.5);
-    backdrop-filter: blur(4px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     border-radius: 0 0 20px 20px;
+    backdrop-filter: blur(4px);
 }
 /*backdrop-filter: blur不生效 目前找不到解決方法*/
 
@@ -92,87 +131,42 @@ body {
     border-bottom-right-radius: 20px;
 }
 
-/* =========================================
-   4. 響應式動畫控制 (RWD Animation Logic)
-   ★ 這是實現你要求的「互相切換」的核心區塊
-   ========================================= */
 
-/* --- 電腦版模式 (螢幕寬度 >= 992px) --- */
-@media (min-width: 992px) {
-    /* 桌面選單：執行「滑入」動畫 */
-    #desktop-nav {
-        animation: slideInDown 1s ease-out forwards;
-        z-index: 1000;
-    }
-
-    /* 手機控制列：執行「滑出」動畫 */
-    #mobile-header {
-        animation: slideOutUp 0.8s ease-out forwards;
-        /* 重要：變成透明後，滑鼠還可能會點到它，這行確保滑鼠穿透過去 */
-        pointer-events: none; 
-        z-index: 999;
-    }
-    
-    /* 強制隱藏手機下拉內容 */
-    #mobileMenuContent {
-        display: none !important;
-    }
-}
-
-/* --- 手機版模式 (螢幕寬度 < 992px) --- */
-@media (max-width: 991.98px) {
-    /* 桌面選單：執行「滑出」動畫 */
-    #desktop-nav {
-        animation: slideOutUp 0.8s ease-out forwards;
-        pointer-events: none; /* 防止隱藏後還擋到點擊 */
-    }
-
-    /* 手機控制列：執行「滑入」動畫 */
-    #mobile-header {
-        animation: slideInDown 1s ease-out forwards;
-        z-index: 1000;
-        background: rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(5px);
-    }
-}
-
-/* =========================================
-   5. 首頁視差區塊 (Home Parallax)
-   ========================================= */
+/*圖片排版*/
 .Home-section {
-    position: relative; /* 作為內部絕對定位元素的參考座標 */
+    position: relative; /*內部絕對定位元素的參考座標*/
     width: 100vw;
-    height: 100vh; /* 佔滿整個視窗高度 */
-    overflow: hidden; /* 超出去的圖片切掉 */
+    height: 100vh;
+    overflow: hidden; /*超出去的圖片切掉*/
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* 視差圖片共用設定 */
+/*視差圖片共用設定*/
 .Home-section img {
-    position: absolute; /* 絕對定位，這樣才能疊在一起 */
+    position: absolute; /*絕對定位，這樣才能疊在一起*/
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover; /* 確保圖片填滿不變形 */
-    pointer-events: none; /* 讓滑鼠點不到圖片，可以直接捲動頁面 */
+    pointer-events: none; /* 確保滑鼠點不到圖片，可以直接捲動頁面 */
 }
 
-/* 1. 底部漸層遮罩 (讓連接處變柔和) */
+/*漸層遮罩*/
 .Home-section::before {
     content: '';
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 350px;
+    height: 400px;
     background: linear-gradient(to top, rgb(10, 42, 67), transparent);
     z-index: 10;     
     pointer-events: none;
 }
 
-/* 2. 全局顏色濾鏡 (統一色調) */
+/*濾鏡*/
 .Home-section::after {
     content: '';
     position: absolute;
@@ -192,7 +186,6 @@ transparent透明
 mix-blend-mode混色模式
 */
 
-/* 調整圖層順序 (z-index) */
 #road { z-index: 6; } 
 
 #text {
@@ -232,39 +225,128 @@ mix-blend-mode混色模式
     }
 }
 
-/* =========================================
-   6. 關於區塊 (About)
-   ========================================= */
+#p1 p{
+    font-size: clamp(13px, 2vw, 20px);
+    font-weight: lighter;
+    letter-spacing: 1px;
+    color: rgb(255, 255, 255);
+    padding: 80px 40px;
+    width: 100vw;
+    overflow: hidden;
+    text-align: center;
+    box-sizing: border-box;
+}
+/*text-align: center整句文字置中
+box-sizing: border-box;確保padding不會影響元素的總寬度*/
+
+
 .About-section {
     position: relative;
+    color: white;
     background-image: url(assets/images/lg.png);
+    height: auto;
+    width: 100vw;
     background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    padding-bottom: 100px;
+    overflow: hidden;
+    
+}
+.About-section::before {
+    content: '';
+    position: absolute;
+    bottom: 32%;
+    width: 100%;
+    height: 1400px;
+    background: linear-gradient(to top,  rgb(10, 42, 67), transparent);
+    z-index: 1;
 }
 
-/* 大頭貼的特殊邊框 */
-.border-custom {
-    border: 3px solid rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-style: dashed; /* 虛線 */
-    max-width: 300px;
+#About {
+    position: relative;
+    padding: 65vh 0 0 0;
+    color: white;
+    width: 100%;
+}
+
+
+.about-header {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;   
+    /* 往左拉回修正 (因為 width 變寬了，起點要往左移才能置中) */
+    margin-left: calc(50% - 50vw); 
+    padding: 0 5vw;   
+    box-sizing: border-box;
+    z-index: 10;
+}
+
+
+.about-name h1 {
+    font-weight: lighter;
+    font-size: clamp(33px, 2vw, 60px);
+    letter-spacing: 10px;
+}
+
+.about-name h3 {
+    font-weight: lighter;
+    font-size: clamp(17px, 2vw, 25px);
+    letter-spacing: 10px;
+}
+
+.about-img-box img {
+    height: 20vh;
+    width: auto;
+    padding: 5px;
+    border: 2px solid white;
+    border-radius: 50%;
+    border-style: dashed groove none dotted;
     transition: transform 0.3s;
 }
 
-.border-custom:hover {
-    transform: rotate(5deg); /* 滑鼠移過去稍微轉一下 */
+.about-img-box img:hover {
+    transform: rotate(15deg);
 }
 
-/* =========================================
-   7. 作品集區塊 (Works)
-   ========================================= */
+.about-text {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;   
+    /* 往左拉回修正 (因為 width 變寬了，起點要往左移才能置中) */
+    margin-left: calc(50% - 50vw); 
+    padding: 0 5vw;   
+    box-sizing: border-box;
+    opacity: 0.8;
+    z-index: 10;
+}
+
+.about-text p {
+    color: rgb(210, 236, 255);
+    font-size: clamp(12px, 2vw, 15px);;
+    font-weight: lighter;
+    letter-spacing: 3px;
+}
+
+.about-text h3 {
+    font-weight: lighter;
+    font-size: 2rem;
+    letter-spacing: 10px;
+    transform: translateX(-1vw);
+}
+
+.about-video-group {
+    position: relative;
+    z-index: 10;
+}
+
+
 .section-works {
-    background-color: rgb(76, 111, 136); /* 灰藍色背景 */
+    background-color: rgb(76, 111, 136);
 }
 
-/* 作品卡片樣式 */
+
 .work-card img {
     width: 100%;
     height: auto;
@@ -273,16 +355,37 @@ mix-blend-mode混色模式
 }
 
 .work-card img:hover {
-    transform: scale(1.02); /* 滑鼠移過去圖片稍微放大 */
+    transform: scale(1.02);
 }
 
-/* =========================================
-   8. 聯絡區塊與頁尾 (Contact & Footer)
-   ========================================= */
-.Contact-section h1 {
-    letter-spacing: 5px;
+
+.Contact-section{
+    display: flex;
+    justify-content: center;
+    color: rgb(255, 255, 255);
+    margin: 50px 20px;
+}
+
+#con{
+    display: grid;
+    margin: 0 10px;
+}
+
+.Contact-section h1{
+    font-weight: lighter;
+    font-size: clamp(33px, 2vw, 60px);
+}
+
+.Contact-section h3{
+    font-weight: lighter;
+    font-size: clamp(17px, 2vw, 25px);
 }
 
 footer {
-    border-top: 1px solid rgba(255,255,255,0.1);
+    color: rgb(210, 236, 255);
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
 }
+
