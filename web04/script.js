@@ -20,10 +20,10 @@ window.addEventListener('scroll', function () {
     let screenHeight = window.innerHeight; // 抓取目前螢幕的高度
 
     // 滾動距離 (value) 乘以不同的小數點
-    bg.style.top = value * 0.5 + 'px';           
+    bg.style.top = value * 1 + 'px';           
     moon.style.left = -value * 1 + 'px';      
-    words.style.top = value * 0.3 + 'px'; 
-    mountain.style.top = -value * 0.15 + 'px';   
+    words.style.top = value * 1 + 'px'; 
+    mountain.style.top = -value * 0.3 + 'px';   
     road.style.top = value * 0.15 + 'px';        
     text.style.top = value * 1 + 'px';        
     //目前嘗試在螢幕變窄時把月亮往中間移 尚找不到解決方法
@@ -64,7 +64,7 @@ if (mobileMenuContent) {
     // 對每一個手機連結設定「點擊」監聽
     mobileLinks.forEach((link) => {
         link.addEventListener('click', () => {
-            bsCollapse.hide(); // 只要點了連結，就命令選單「收起來」
+            bsCollapse.hide();
         });
     });
 }
